@@ -1,65 +1,92 @@
-
-#print(map_table[0:3])
-
-#x_numbers = 1,2,3,4,5,6,7,8,9,10
-#board_shown = [[' ']*8 for x in range(8)] 
-#board_hidden = [[' ']*8 for x in range(8)]
-
-
+def create_abc():
+    abc = {}
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for i in range(26):
+        abc[i] = alphabet[i]
+    return abc
 
 def set_board():
     y_numbers = 5
     board = []
-    board_hidden = []
     for i in range(y_numbers):
-        board.append("."*y_numbers)
-        board_hidden.append("."*y_numbers)
+        board.append(["."]*y_numbers)
 
-    abc = {}
-    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    for i in range(y_numbers):
-        abc[i] = alphabet[i]
-    #print(abc)
 
+    abc = create_abc()
     row = 0
-    print(" ", "1", "2", "3", "4", "5")
+    print(" ", "1", "2", "3", "4", "5") #unschoen
     for line in board:
         print(abc[row], "|".join(line))
         row +=1
-    '''
-    first_row = []
-    first_row.append(" ")
-    for num in x_numbers:
-        first_row.append(str(num))
-    first_row = (" ".join(first_row))
-    
+     
+    return board
 
-    row = []
-    for i in range(1, y_numbers+1):
-        row.append("|."*y_numbers)
-        
-    return row
-'''
 
-def set_ships():
-    board_shown = set_board()
-    board_hidden = set_board()
+def set_ships_user():
+    board = set_board()
+    print(board)
+    for i in range(2):
+        #user input of ship location
+        while True:
+            try:
+                y = int(input("enter row of ship: "))-1
+                if y < len(board):
+                    print("ok")
+                    break
+                elif y > len(board):
+                    print(len(board))
+                    print("no valid value, try again")
+            except:
+                print("Provide an integer value...")
+                continue
 
-    print(board_shown, '\n', board_hidden)
-    #board = [["."]*10 for u in range(10)]
-    '''for i in range(2):
-        y, x = input("enter location of ship (format: y x): ").split()
-        y = int(y)
-        x = int(x)
-        print(board_hidden[y])
-        
-        if board[y][x] == ".":
-            board[y][x] = "o"
-        board = " ".join(board)
+                x = int(input("enter column of ship: "))-1
+
+                #check if empty
+                if board[y][x] == ".":
+                    board[y][x] = "o"
+                elif board[y][x] == "o":
+                    print("already taken")
+
+    abc = create_abc()
+    row = 0
+    print(" ", "1", "2", "3", "4", "5") #unschoen
+    for line in board:
+        print(abc[row], "|".join(line))
+        row +=1
         
     return board
-'''      
+
+def set_ships_pc():
+    board = set_board()
+    print(board)
+    for i in range(2):
+        #user input of ship location
+        y = int(input("enter row of ship "))-1
+        x = int(input("enter column of ship: "))-1
+        
+        print(board[x][y])
+        
+        #check if empty
+        if board[y][x] == ".":
+            board[y][x] = "o"
+
+    abc = create_abc()
+    row = 0
+    print(" ", "1", "2", "3", "4", "5") #unschoen
+    for line in board:
+        print(abc[row], "|".join(line))
+        row +=1
+        
+    return board
+
 
 #set_board()
 
-set_ships()
+print(set_ships_user())
+
+def play_battleship():
+    set_board()
+    set_ships_user()
+    #user_guess()
+    #pc_guess()
