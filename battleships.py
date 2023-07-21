@@ -24,25 +24,50 @@ def init_board():
 
 
 def set_ships_user():
+    #board = board
     abc = {}
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     for i in range(26):
         abc[alphabet[i]] = i 
     board = init_board()
     print(board)
+    print(abc)
+    #while len(ships_user) < 2:
+    
     ships_user = []
-    for i in range(2):
-        #user input of ship location
-        y = abc[input("enter row of ship: ")]
-        x = int(input("enter column of ship: "))
-        ships_user.append([y,x])
-        print(ships_user)
-        if board[y-1][x-1] == ".":
-            board[y-1][x-1] = "o"
-        elif board[y][x] == "o":
-            print("already taken")
-    print(board)
-    #abc = create_abc()
+    while True:
+        row_num = input("enter row of ship: ")
+        if not row_num in alphabet:
+            print("is not in it")
+            continue
+        else:
+            y = abc[row_num]
+        if y > 4:
+            print("out of range")
+            continue
+          
+        column_num = input("enter column of ship: ")
+        if type(column_num) == int:
+            x = int(column_num)-1
+
+        else:
+            print("enter integer")
+            continue
+                          
+        if x > 5:
+            print("out of range")
+            continue
+        if 0 <= y < 5 and 0 <= x < 5:
+            if board[y][x] == ".":
+                board[y][x] = "o"
+                ships_user.append([y,x])
+                break
+            elif board[y][x] == "o":
+                print("already taken")
+        
+    
+                
+    print(board, ships_user)
     
     
     row = 0
@@ -52,52 +77,51 @@ def set_ships_user():
         row +=1
         
        
-    return board, ships_user
+    return board, ships_user           
     
 
-'''
-                if y < len(board):
-                    print("ok")
-                    break
-                elif y > len(board):
-                    print(len(board))
-                    print("no valid value, try again")
-            except:
-                print("Provide an integer value...")
-                continue
-'''
-
-                #check if empty
-                
-    
-
-def set_ships_pc():
-    board = set_board()
-    print(board)
-    for i in range(2):
-        #user input of ship location
-        y = int(input("enter row of ship "))-1
-        x = int(input("enter column of ship: "))-1
-        
-        print(board[x][y])
-        
-        #check if empty
+def set_ships_pc(board, ships_pc):
+    board = board
+    abc = {}
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for i in range(26):
+        abc[alphabet[i]] = i 
+    #board = init_board()
+    #print(board)
+    #while len(ships_user) < 2:
+    y = abc[input("pc, enter row of ship: ")]
+    x = int(input("pc, enter column of ship: "))-1
+    if 0 <= y < 5 and 0 <= x < 5:
         if board[y][x] == ".":
             board[y][x] = "o"
-
-    abc = create_abc()
+            ships_pc.append([y,x])
+        elif board[y][x] == "o":
+            print("already taken")
+        else:
+            print("not valid")
+    
+    print(board, ships_pc)
+    
     row = 0
     print(" ", "1", "2", "3", "4", "5") #unschoen
     for line in board:
-        print(abc[row], "|".join(line))
+        print([key for key in abc.keys()][row], "|".join(line))
         row +=1
-        
-    return board
+    return board, ships_pc
+    
+
+def set_board():
+    board = init_board()
+    print(board)
+    ships_user = []
+    ships_pc = []
+    while len(ships_user) < 2 and len(ships_pc) < 2:
+        set_ships_user(board, ships_user)
+        set_ships_pc(board, ships_pc)
 
 
-#set_board()
 
-print(set_ships_user())
+set_ships_user()
 
 def play_battleship():
     set_board()
