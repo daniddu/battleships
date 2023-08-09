@@ -14,23 +14,30 @@ def create_abc_pc():
         abc[i] = alphabet[i]
     return abc
 
-def init_board():
-    size = 10 #make it input?
+def init_board(size):
+    #size = int(input("size: "))+1
+    #size = 10 #make it input?
     board = []
     for i in range(size):
         board.append(["."]*size)
-    return board, size
+    return board
 
-def print_board_user(board_user, abc):
+def print_board_user(board_user, abc, size):
+    print(" ", end=" ")
+    for x in range(1,size+1):
+        print(x, end=" ")
+    print("")
     row = 0
-    print(" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
     for line in board_user:
         print([key for key in abc.keys()][row], "|".join(line))
         row +=1
 
-def print_board_pc(board_pc, abc):
+def print_board_pc(board_pc, abc, size):
+    print(" ", end=" ")
+    for x in range(1,size+1):
+        print(x, end=" ")
+    print("")
     row = 0
-    print(" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
     for line in board_pc:
         print(abc[row], "|".join(line))
         row +=1
@@ -72,7 +79,7 @@ def set_ships_user(board_user, ships_user, size):
                 print("there is already a ship")
                 continue
                     
-        print_board_user(board_user,abc) 
+        print_board_user(board_user,abc, size) 
         return board_user, ships_user
    
 
@@ -102,11 +109,13 @@ def set_ships(ships_user, ships_pc, board_user, board_pc, num_ships, size):
 #setting board and placing ships
 def set_board():
     print("lets play battleships!", "\n")
-    board_user, size = init_board()
+    size = int(input("size: "))
+    board_user = init_board(size)
     print("place your ships:")
     abc = create_abc_user()
-    print_board_user(board_user, abc)
-    board_pc, size = init_board()
+    print_board_user(board_user, abc, size)
+    board_pc = init_board(size)
+    print("\n")
     ships_user = []
     ships_pc = []
     while True:
@@ -121,7 +130,7 @@ def set_board():
                     print("please enter a number")
     print("place {} ship(s)".format(num_ships))
     set_ships(ships_user, ships_pc, board_user, board_pc, num_ships, size)
-    return board_user, board_pc, ships_user, ships_pc
+    return board_user, board_pc, ships_user, ships_pc, size
 
 
 def user_guess(board_pc, ships_pc, guessing_board, size):
@@ -183,24 +192,24 @@ def pc_guess(board_user, ships_user, size):
     print("{} ship(s) left to find for pc!".format(len(ships_user)))
     return board_user, ships_user
 
-def guessing(board_user, board_pc, ships_user, ships_pc):
+def guessing(board_user, board_pc, ships_user, ships_pc, size):
     abc = create_abc_pc()
-    guessing_board, size = init_board()
+    guessing_board = init_board(size)
 
     while len(ships_user) > 0 and len(ships_pc) > 0:
         print("it's your turn:")
         board_pc, ships_pc, guessing_board = user_guess(board_pc, ships_pc, guessing_board, size)
         #print(guessing_board)
         print("your guessing board:")
-        print_board_pc(guessing_board, abc)
+        print_board_pc(guessing_board, abc, size)
         print("pcs turn:")
         board_user, ships_user = pc_guess(board_user, ships_user, size)
     
     return board_pc, ships_pc, guessing_board, board_user, ships_user
    
 def play_battleship():
-    board_user, board_pc, ships_user, ships_pc = set_board()
-    board_pc, ships_pc, guessing_board, board_user, ships_user = guessing(board_user, board_pc, ships_user, ships_pc)
+    board_user, board_pc, ships_user, ships_pc, size = set_board()
+    board_pc, ships_pc, guessing_board, board_user, ships_user = guessing(board_user, board_pc, ships_user, ships_pc, size)
     if len(ships_user) == 0:
         print("pc is the winner!") 
     elif len(ships_pc) == 0:
