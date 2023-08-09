@@ -15,11 +15,11 @@ def create_abc_pc():
     return abc
 
 def init_board():
-    y_numbers = 5
+    size = 10 #make it input?
     board = []
-    for i in range(y_numbers):
-        board.append(["."]*y_numbers)
-    return board
+    for i in range(size):
+        board.append(["."]*size)
+    return board, size
 
 def print_board_user(board_user, abc):
     row = 0
@@ -35,112 +35,139 @@ def print_board_pc(board_pc, abc):
         print(abc[row], "|".join(line))
         row +=1
 
-def set_ships_user(board_user, ships_user):
+def set_ships_user(board_user, ships_user, size):
     abc = create_abc_user() 
     alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     #print_board_user(board_user, abc)
 
     while True:
-        row_num = input("enter row of ship: ")
-        if not row_num in alphabet:
-            print("is not in it")
+        row_num = input("enter row of ship (A-J): ")
+        if not row_num.upper() in alphabet:
+            print("please enter a character between A and J")
             continue
         else:
-            y = int(abc[row_num])
+            y = int(abc[row_num.upper()])
 
-        if y > 4:
+        if y > size:
             print("out of range")
             continue
         else:
             while True:
                 try:
-                    column_num = int(input("enter column of ship: "))
-                    if type(column_num) == int:
-                        x = column_num-1
-                        if x > 5:
-                            print("out of range")
-                        else:
-                            break  
+                    x = int(input("enter column of ship: "))-1
+                    if x >= size or x < 0:
+                        print("out of range")
+                        continue
+                    else:
+                        break  
                 except ValueError:
-                    print("enter number")
+                    print("please enter a number")
            
-        if y < 5 and x < 5:
-                if board_user[y][x] == ".":
-                    board_user[y][x] = "o"
-                    ships_user.append([y,x])
-                        
-                elif board_user[y][x] == "o":
-                    print("already taken")
-                    continue
+        if y < size and x < size:
+            if board_user[y][x] == ".":
+                board_user[y][x] = "o"
+                ships_user.append([y,x])
                     
-        print_board_user(board_user,abc)
-        #print(board_user)
-        #print(ships_user)
-   
-        return board_user, ships_user           
+            elif board_user[y][x] == "o":
+                print("there is already a ship")
+                continue
+                    
+        print_board_user(board_user,abc) 
+        return board_user, ships_user
    
 
-def set_ships_pc(board_pc, ships_pc):
-    abc = create_abc_pc()
+def set_ships_pc(board_pc, ships_pc, size):
+    #abc = create_abc_pc()
     while True:
-
-        y = random.randrange(0, 5)
-        x = random.randrange(0, 5)
+        y = random.randrange(0, size)
+        x = random.randrange(0, size)
                     
         if board_pc[y][x] == ".":
-            board_pc[y][x] = "o"
+            board_pc[y][x] = "o" 
             ships_pc.append([y,x])
 
         elif board_pc[y][x] == "o":
-            print("already take")
+            print("there is already a ship")
             continue
 
-        print("ships_board:", board_pc)
-        print("ships_pc:",ships_pc)    
+        print("ships_pc:", ships_pc)    
         return board_pc, ships_pc
     
-def check_num_ships(ships_user, ships_pc, board_user, board_pc):
-    while len(ships_user) < 2 and len(ships_pc) < 2:
-        set_ships_user(board_user, ships_user)
-        set_ships_pc(board_pc, ships_pc)
+def set_ships(ships_user, ships_pc, board_user, board_pc, num_ships, size):
+    while len(ships_user) < num_ships and len(ships_pc) < num_ships:
+        set_ships_user(board_user, ships_user, size)
+        set_ships_pc(board_pc, ships_pc, size)
     return board_user, board_pc
 
+#setting board and placing ships
 def set_board():
     print("lets play battleships!", "\n")
-    board_user = init_board()
-    print("board for your ships:")
+    board_user, size = init_board()
+    print("place your ships:")
     abc = create_abc_user()
     print_board_user(board_user, abc)
-    board_pc = init_board()
+    board_pc, size = init_board()
     ships_user = []
     ships_pc = []
-
-    check_num_ships(ships_user, ships_pc, board_user, board_pc)
+    while True:
+                try:
+                    num_ships = int(input("how many ships do want to use (max. 5)? ")) #check if num and how many (max 5?)
+                    if num_ships >= 5 or num_ships < 0:
+                        print("out of range")
+                        continue
+                    else:
+                        break  
+                except ValueError:
+                    print("please enter a number")
+    print("place {} ship(s)".format(num_ships))
+    set_ships(ships_user, ships_pc, board_user, board_pc, num_ships, size)
     return board_user, board_pc, ships_user, ships_pc
 
 
-def user_guess(board_pc, ships_pc, guessing_board):
+def user_guess(board_pc, ships_pc, guessing_board, size):
+    abc = create_abc_user() 
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    while True:
+        row_num = input("guess y: ")
+        if not row_num.upper() in alphabet:
+            print("please enter a character between A and J")
+            continue
+        else:
+            y = int(abc[row_num.upper()])
 
-    y = int(input("guess y: "))
-    x = int(input("guess x: "))
+        if y > size:
+            print("out of range")
+            continue
 
-    if guessing_board[y][x] == "/":
-        print("already guessed")
-    if board_pc[y][x] == "o":
-        guessing_board[y][x] = "X"
-        board_pc[y][x] = "X"
-        ships_pc.remove([y,x])
-        print("hit it!")
-        print(ships_pc)
-    elif board_pc[y][x] == ".":
-        guessing_board[y][x] = "/"
-        print("nope")
-    return board_pc, ships_pc, guessing_board
+        while True:
+            try:
+                x = int(input("guess x: "))-1
+                if x >= size or x < 0:
+                    print("out of range")
+                    continue
+                else:
+                    break
+            except ValueError:
+                print("please enter a number")
+                              
+        if guessing_board[y][x] == "/":
+            print("already guessed")
+        if board_pc[y][x] == "o":
+            guessing_board[y][x] = "X"
+            board_pc[y][x] = "X"
+            ships_pc.remove([y,x])
+            print("hit it!")
+        elif board_pc[y][x] == ".":
+            guessing_board[y][x] = "/"
+            print("nope!")
+    
+        print("{} ship(s) left to find for you!".format(len(ships_pc)))
+        return board_pc, ships_pc, guessing_board
 
-def pc_guess(board_user, ships_user):
+def pc_guess(board_user, ships_user, size):
 
-    y = random.randrange(0, 5)
-    x = random.randrange(0, 5)
+    y = random.randrange(0, size)
+    x = random.randrange(0, size)
 
     if board_user[y][x] == "/":
         print("pc, already guessed")
@@ -151,27 +178,33 @@ def pc_guess(board_user, ships_user):
         print(ships_user)
     elif board_user[y][x] == ".":
         board_user[y][x] = "/"
-        print("nope!")
+        print("not hit!")
+
+    print("{} ship(s) left to find for pc!".format(len(ships_user)))
     return board_user, ships_user
 
 def guessing(board_user, board_pc, ships_user, ships_pc):
     abc = create_abc_pc()
-    guessing_board = init_board()
+    guessing_board, size = init_board()
 
     while len(ships_user) > 0 and len(ships_pc) > 0:
-        print("users turn")
-        board_pc, ships_pc, guessing_board = user_guess(board_pc, ships_pc, guessing_board)
+        print("it's your turn:")
+        board_pc, ships_pc, guessing_board = user_guess(board_pc, ships_pc, guessing_board, size)
         #print(guessing_board)
+        print("your guessing board:")
         print_board_pc(guessing_board, abc)
-        print("pcs turn")
-        board_user, ships_user = pc_guess(board_user, ships_user)
-        print(ships_user)
+        print("pcs turn:")
+        board_user, ships_user = pc_guess(board_user, ships_user, size)
     
     return board_pc, ships_pc, guessing_board, board_user, ships_user
    
 def play_battleship():
     board_user, board_pc, ships_user, ships_pc = set_board()
     board_pc, ships_pc, guessing_board, board_user, ships_user = guessing(board_user, board_pc, ships_user, ships_pc)
-   
+    if len(ships_user) == 0:
+        print("pc is the winner!") 
+    elif len(ships_pc) == 0:
+        print("you are the winner!")
+       
 
 play_battleship()
