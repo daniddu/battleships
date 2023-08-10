@@ -1,19 +1,41 @@
 ships = [5,3,3,2,2,2]
 #if input not in ships, try again (size not left, sizes {} left)
+print(len(ships))
 ships.remove(5)#remove input
-print(ships)
-x = 0
+print(len(ships))
 
 
-class ship:
-    def __init__(self, length, orientation, location, listl): 
+class Ship:
+    def __init__(self, length, location): 
             self.length = length
-            self.orientation = orientation
             self.location = location
-            self.listl = listl
             
     def __str__(self):
-        return f"{self.length}, {self.orientation}, {self.location}"
+        return f"{self.length}, {self.location}"
+    
+    
+ships_user = []
+
+def create_ships(length,y_start,x_start,y_end,x_end):
+    if y_start == y_end:
+         print("horizontal")
+    else:
+         print("vertical")
+
+    location = (y_start,x_start)
+    ship = Ship(length, location)
+    ships_user.append(ship)
+    return "ship: " + str(ships_user), Ship
+
+for i in range(0,2):
+    create_ships(input("enter length: "),input("enter startrow: "),input("enter startcol: "),input("enter endrow: "),input("enter endcol: "))
+
+for i in range(0,2):
+     print("length of ship {}: {};".format(i+1, ships_user[i].length), ships_user[i])
+
+'''
+
+        
 
 length = int(input("Enter length: "))
 orientation = input("Enter ori: ")
@@ -24,7 +46,7 @@ battleship1 = ship(length, orientation, location)
 print(battleship1)
 
 
-'''
+
 
  def set_ships_user(board_user, ships_user, size):
     abc = create_abc_user() 
@@ -65,4 +87,4 @@ print(battleship1)
                     
         print_board_user(board_user,abc) 
         return board_user, ships_user
-        '''
+'''
