@@ -5,24 +5,30 @@ print(len(ships))
 print(len(ships))
 
 
-class Ship:
+'''class Ship:
     def __init__(self, length, location): 
             self.length = length
             self.location = location
             
     def __str__(self):
         return f"{self.length}, {self.location}"
-    
+'''    
     
 ships_user = []
 
-def create_ships(length,y_start,x_start,hor_ver):
+def create_ships(length,y_start,x_start,hor_ver,board_user,ships_user):
+    #abc = create_abc_user() 
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     size = 5
+    while not y_start.upper() in alphabet:
+        print("please enter a character between A and J")
+        y_start = input("enter row: ")
+    y = int(abc[y_start.upper()])
+
     if hor_ver == "H":
         while x_start-1+length > size:
             print("not ok")
             x_start = int(input("enter col: "))
-            print()
         print("ok")  
         #set ship in board_user
         for i in range (x_start, x_start+length):
