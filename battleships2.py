@@ -46,12 +46,12 @@ def set_ships_user(length,board_user,ships_user,size):
     ship = []
 
     while True:
-        y_start = input("enter row of ships starting point: ")
-
-        while not y_start.upper() in alphabet:
+        y_start = input("enter row of ships starting point: ")           
+    
+        while not y_start.upper() in alphabet or y_start == "":
             y_start = input("please enter a character between A and J: ")
         y = int(abc[y_start.upper()])
-
+        
         if y > size:
             print("out of range.")
             continue
@@ -206,7 +206,7 @@ def user_guess(board_pc, ships_pc, guessing_board, size):
     alphabet = "ABCDEFGHIJ"
     while True:
         row_num = input("guess row of the ship: ")
-        if not row_num.upper() in alphabet:
+        if not row_num.upper() in alphabet or row_num == "":
             print("please enter a character between A and J")
             continue
         else:
@@ -258,8 +258,9 @@ def pc_guess(board_user, ships_user, size, hitship):
             pass
         elif board_user[y][x] == "o":
             board_user[y][x] = "X"
+            print("pc hit your ship")
             for i in ships_user:
-                print(ships_user)
+                print("ships_user:", ships_user)
                 pos = ships_user.index(i)
                 for o in i:
                     pos2 = ships_user[pos].index(o)
@@ -267,10 +268,10 @@ def pc_guess(board_user, ships_user, size, hitship):
                         pass
                     elif ships_user[pos][pos2] == [y,x]:
                         #p = i
-                        print(i)
+                        print("hit ship:",i)
                         print("size of target:",ships[pos])
                         print("y",ships_user[pos][pos2])
-                        hitship = ships_user[pos][pos2]
+                        hitship = [y,x]
                         ships_user[pos].remove([y,x])
 
         elif board_user[y][x] == ".":
@@ -294,22 +295,25 @@ def pc_guess(board_user, ships_user, size, hitship):
                 break 
             elif board_user[y][x+1] == ".":
                 board_user[y][x+1] = "/"
+                hitship = ([y,x])
                 print("not hit!")
                 break
             elif board_user[y][x+1] == "X":
-                pass
+                print("oh")
+                board_user[y][x-1] = "X"
+                hitship = ([y,x-1])
+                break
             elif board_user[y][x+1] == "/" or ((x+1) > 9):
-                i = 0
+                i = 1
                 while board_user[y][x-i] == "X" and (x+i) <= 9:
                     i += 1
                     print("n",board_user[y][x-i])
-                    #if (x+i) > 9:
-                        #continue
+                   
                 else:
                     board_user[y][x-i] = "X"
                     hitship = ([y,x-i])
                     break
-
+            '''
             if board_user[y][x-1] == "o":
                 board_user[y][x-1] = "X"
                 hitship = ([y,x-1])
@@ -332,6 +336,7 @@ def pc_guess(board_user, ships_user, size, hitship):
                     hitship = ([y,x+i])
                     break
             
+            
             if board_user[y-1][x] == "o":
                 board_user[y-1][x] = "X"
                 hitship = ([y-1,x])
@@ -353,7 +358,7 @@ def pc_guess(board_user, ships_user, size, hitship):
                     board_user[y+i][x] = "X"
                     hitship = ([y+1,x])
                     break
-            
+            '''
             if board_user[y+1][x] == "o":
                 board_user[y+1][x] = "X"
                 hitship = ([y+1,x])
@@ -376,21 +381,27 @@ def pc_guess(board_user, ships_user, size, hitship):
                     print("hit!")
                     hitship = ([y-1,x])
                     break
-                      
-            for i in ships_user:
-                pos = ships_user.index(i)
-                for o in i:
-                    pos2 = ships_user[pos].index(o)
-                    if ships_user[pos][pos2] != hitship:
-                        pass
-                    elif ships_user[pos][pos2] == hitship:
-                        ships_user[pos].remove(hitship)
-                        #break
-                    print("w",ships_user)  
-                
-                if len(ships_user[pos]) == 0:
-                    print(ships_user[pos])
-                    hitship = 0
+                    
+        for i in ships_user:
+            pos = ships_user.index(i)
+
+            for o in i:
+                pos2 = ships_user[pos].index(o)
+                if ships_user[pos][pos2] != hitship:
+                    #pos = ships_user.index(i)
+                    pass
+                    
+            
+                elif ships_user[pos][pos2] == hitship:
+                    print("w",ships_user[pos])  
+                    #pos = ships_user.index(i)
+                    ships_user[pos].remove(hitship)
+                    print("c", ships_user[pos])
+                    #break
+        
+                    if len(ships_user[pos]) == 0:
+                        print("k", ships_user[pos])
+                        hitship = 0
 
     return board_user, ships_user, hitship
 
@@ -423,14 +434,10 @@ def play_battleship():
     board_user, board_pc, ships_user, ships_pc, size = set_board()
     print("lets start guessing!"+"\n")
     hitship = 0
-    board_pc, ships_pc, guessing_board, board_user, ships_user = guessing(board_user, board_pc, ships_user, ships_pc, size, hitship)
-    #print(len(ships_pc))
-    #print("x", ships_pc)
+    board_pc, ships_pc, guessing_board, board_user, ships_user, hitship = guessing(board_user, board_pc, ships_user, ships_pc, size, hitship)
     if len(ships_user) == ships_user.count([]):
-        print(len(ships_user),ships_user.count([]))
         print("pc is the winner!") 
     elif len(ships_pc) == ships_pc.count([]):
-        #print(len(ships_pc),ships_pc.count([]))
         print("you are the winner!")
        
 
